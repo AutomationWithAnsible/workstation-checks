@@ -16,4 +16,5 @@ workstation_check_env                     :
               XXXXX                       : "{{ lookup('env','XXXXX') }}"
               RRRR                        : "xxxxx"
 
-config_access_ssh_test                    : "xxxx.xxx.xx.xxx" 
+workstation_check_access_ssh_test         : "xxxx.xxx.xx.xxx" 
+workstation_check_ssh_path                : "{{ lookup('env','HOME') }}/.ssh/id_rsa."

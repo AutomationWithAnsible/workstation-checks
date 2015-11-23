@@ -1,17 +1,5 @@
 ---
 
-- name: software | checks | Run hash
-  shell: hash
-  changed_when: False
-  sudo: False 
-  register: hash
-
-- name: software | checks | Run hash
-  debug:
-    var=hash
-  failed_when: False
-  changed_when: False
-
 - name: software | checks | Run which git
   command:
     which git
