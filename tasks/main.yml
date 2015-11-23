@@ -1,0 +1,28 @@
+---
+
+- include: "distribution.yml"
+  tags: distribution
+
+- include: "ssh.yml"
+  when: workstation_check_ssh_key
+  tags: ssh
+
+- include: "encryption.yml"
+  when: workstation_check_hd_encryption
+  tags: encryption
+
+- include: "firewall.yml"
+  when: workstation_check_firewall
+  tags: firewall
+
+- include: "software/main.yml"
+  when: workstation_check_software
+  tags: software
+
+- include: environment.yml
+  when: workstation_check_environment
+  tags: environment
+
+- include: access.yml
+  when: workstation_check_access
+  tags: access

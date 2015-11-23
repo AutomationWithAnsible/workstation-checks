@@ -1,0 +1,60 @@
+---
+
+- name: ssh | stat your ssh key
+  stat: 
+    path="{{ config_key_path }}"
+  become: False
+  register: ssh_st
+
+- name: ssh | Check if ssh key exists
+  debug:
+    msg="Your ssh keys are not setup. You dont have {{ config_key_path }}"
+  failed_when: ssh_st.stat.exists == False
+  when: ssh_st.stat.exists == False
+  ignore_errors: yes
+
+- name: ssh | Check if your ssh key exists
+  debug:
+    msg="Your ssh keys are not setup. You dont have '{{ config_key_path }}' file"
+  failed_when: ssh_st.stat.exists == False
+  when: ssh_st.stat.exists == False
+  ignore_errors: yes
+
+- name: ssh | Run ssh-keygen -lf
+  command:
+    ssh-keygen -lf {{ config_key_path }}
+  changed_when: False
+  when: ssh_st.stat.exists
+  register: ssh_keygen
+  ignore_errors: yes
+
+- name: ssh | Check if key is less then 2048
+  debug:
+    msg="Error your ssh key length should be min of 2048"
+  failed_when: "{{ ssh_keygen.stdout | truncate(4, True,'')| int }} < 2048"
+  ignore_errors: yes
+  when: "ssh_st.stat.exists and {{ ssh_keygen.stdout | truncate(4, True,'')| int }} < 2048"
+
+- name: ssh | Check if key is less then 4096
+  debug:
+    msg="Warrning its recommaned your ssh key length should be >= 4096"
+  changed_when: "{{ ssh_keygen.stdout | truncate(4, True,'')| int }} < 4096"
+  when: "ssh_st.stat.exists and {{ ssh_keygen.stdout | truncate(4, True,'')| int }} < 4096"
+
+- name: ssh | Grep for ENCRYPTED in keys
+  command:
+    grep -L ENCRYPTED {{ config_key_path }}
+  changed_when: False
+  failed_when: False
+  when: ssh_st.stat.exists
+  register: ssh_encrypted
+  ignore_errors: yes
+
+- name: ssh | Check if your keys are encrypted
+  debug:
+    msg="Error your keys are not encrypted. Please encrypt it"
+  failed_when: ssh_encrypted.rc != 0
+  when: ssh_st.stat.exists and ssh_encrypted.rc != 0
+  ignore_errors: yes
+
+

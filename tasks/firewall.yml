@@ -1,0 +1,16 @@
+---
+
+- name: firewall | Mac Run socketfilterfw status
+  command:
+    /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate
+  failed_when: False
+  changed_when: False
+  register: hd_firewall_mac
+  when: ansible_distribution == 'MacOSX'
+
+- name: firewall | Complain if firewall is not enabled
+  debug:
+     msg="Error You should enable firewwall on your mac for security reasons"
+  failed_when: hd_firewall_mac.stdout.find('= 0') != -1
+  ignore_errors: yes
+  when: ansible_distribution == 'MacOSX' and hd_firewall_mac.stdout.find('= 0') != -1

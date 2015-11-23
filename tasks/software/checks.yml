@@ -1,0 +1,53 @@
+---
+
+- name: software | checks | Run hash
+  shell: hash
+  changed_when: False
+  sudo: False 
+  register: hash
+
+- name: software | checks | Run hash
+  debug:
+    var=hash
+  failed_when: False
+  changed_when: False
+
+- name: software | checks | Run which git
+  command:
+    which git
+  failed_when: False
+  changed_when: False
+  register: git_which
+
+- name: software | checks | Run which VirtualBox
+  command:
+    which VirtualBox
+  failed_when: False
+  changed_when: False
+  register: virtualbox_which
+
+- name: software | checks | Run which vagrant
+  command:
+    which vagrant
+  failed_when: False
+  changed_when: False
+  register: vagrant_which
+
+- name: software | checks | Check if git is installed
+  debug:
+     msg="Error You must install git"
+  failed_when: git_which.rc != 0
+  ignore_errors: yes
+  when: git_which.rc != 0
+
+- name: software | checks | Check if VirtualBox is installed
+  debug:
+     msg="Warning You should install VirtualBox"
+  changed_when: virtualbox_which.rc != 0
+  when: virtualbox_which.rc != 0
+
+- name: software | checks | Check if vagrant is installed
+  debug:
+     msg="Warning You should install vagrant"
+  changed_when: vagrant_which.rc != 0
+  when: vagrant_which.rc != 0

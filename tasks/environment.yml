@@ -1,0 +1,13 @@
+---
+
+- name: environment | Check the env Variable
+  set_fact:
+    evaluate_env: "{{ lookup('template', '../templates/env.j2') }}"
+
+- name: environment | This environmental variables are not set
+  debug:
+    msg="Warnning '{{ item }}' environmental variable not set properly"
+  changed_when: True
+  with_items: evaluate_env.split('-')
+  when: evaluate_env == 'NOTHING'
+

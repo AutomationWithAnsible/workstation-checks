@@ -1,0 +1,19 @@
+---
+workstation_check_supported_platform      :
+                                            - Darwin
+workstation_check_supported_distribution  :
+                                            - MacOSX
+                                            - Linux
+
+workstation_check_ssh_key                 : true
+workstation_check_hd_encryption           : true
+workstation_check_firewall                : true
+workstation_check_software                : true
+workstation_check_environment             : False
+workstation_check_access                  : False
+
+workstation_check_env                     :
+              XXXXX                       : "{{ lookup('env','XXXXX') }}"
+              RRRR                        : "xxxxx"
+
+config_access_ssh_test                    : "xxxx.xxx.xx.xxx" 

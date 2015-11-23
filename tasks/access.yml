@@ -1,0 +1,30 @@
+---
+
+- name: access | ping to test hosts
+  command: "ping -c 3 {{ config_access_ssh_test }}"
+  changed_when: False
+  register: vpn_access
+  ignore_errors: yes
+
+- name: access | Check if vpn access
+  debug:
+     msg="Error You dont have vpn access or Connection error."
+  failed_when: vpn_access | failed
+  ignore_errors: yes
+  when: vpn_access | failed
+
+- name: access | Connect to test hosts
+  command: hostname
+  delegate_to: "{{ config_access_ssh_test }}"
+  connection: "smart"
+  become: False
+  changed_when: False
+  register: ssh_access
+  ignore_errors: yes
+
+- name: access | Check if ssh access worked
+  debug:
+     msg="Error You dont have ssh access or Connection error."
+  failed_when: ssh_access | failed
+  ignore_errors: yes
+  when: ssh_access | failed

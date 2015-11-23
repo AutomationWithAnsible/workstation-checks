@@ -1,0 +1,45 @@
+---
+# TODO: Support Ubuntu
+
+- name: distribution | Check OS compatibility
+  debug:
+    msg="Error your os is might not be supported '{{ ansible_os_family }}'"
+  failed_when: ansible_os_family not in workstation_check_supported_platform
+  when: ansible_os_family not in workstation_check_supported_platform
+  ignore_errors: yes
+
+- name: distribution | Check your distribution
+  debug:
+     msg="Your distribution might not be supported. '{{ ansible_distribution }}'"
+  changed_when: ansible_distribution not in workstation_check_supported_distribution
+  when: ansible_distribution not in workstation_check_supported_distribution
+
+- name: distribution | Mac Run fdesetup status
+  command:
+    fdesetup status
+  failed_when: False
+  changed_when: False
+  register: hd_encryption_mac
+  when: ansible_distribution == 'MacOSX' and workstation_check_hd_encryption
+
+- name: distribution | Complain if hd encryption is not on and required on Mac
+  debug:
+     msg="Error You should enable Valut on your mac for security reasons"
+  failed_when: hd_encryption_mac.stdout.find('Off') != -1
+  ignore_errors: yes
+  when: ansible_distribution == 'MacOSX' and workstation_check_hd_encryption and hd_encryption_mac.stdout.find('Off') != -1
+
+- name: distribution | Linux run blkid on home
+  command:
+    blkid `df -P /home/ | tail -1 | cut -d' ' -f 1`
+  failed_when: False
+  changed_when: False
+  register: hd_encryption_linux
+  when: ansible_distribution == 'Linux' and workstation_check_hd_encryption
+
+- name: distribution | Complain if hd encryption is not on and required on Linux
+  debug:
+     msg="Error You should enable Valut on your mac for security reasons"
+  failed_when: hd_encryption_linux.stdout.find('crypto') != -1
+  ignore_errors: yes
+  when: ansible_distribution == 'Linux' and workstation_check_hd_encryption and hd_encryption_linux.stdout.find('crypto') != -1

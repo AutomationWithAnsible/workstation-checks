@@ -1,0 +1,4 @@
+---
+
+- include: checks.yml
+  when: workstation_check_software
