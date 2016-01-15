@@ -8,7 +8,7 @@
   register: hd_encryption_mac
   when: ansible_distribution == 'MacOSX' and workstation_check_hd_encryption
 
-- name: encryption | Complain if hd encryption is not on and required on Mac
+- name: encryption | Mac Complain if hd encryption is not on
   debug:
      msg="Error You should enable Valut on your mac for security reasons"
   failed_when: hd_encryption_mac.stdout.find('Off') != -1
@@ -23,7 +23,7 @@
   register: hd_encryption_linux
   when: ansible_distribution == 'Linux' and workstation_check_hd_encryption
 
-- name: encryption | Complain if hd encryption is not on and required on Linux
+- name: encryption | Linux Complain if hd encryption is not on
   debug:
      msg="Error You should enable Valut on your mac for security reasons"
   failed_when: hd_encryption_linux.stdout.find('crypto') != -1
